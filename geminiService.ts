@@ -7,21 +7,21 @@ const getAIClient = () => {
 
 export const analyzeBusinessPerformance = async (context: string): Promise<string> => {
   const ai = getAIClient();
-  const systemInstruction = "You are a Senior Business Consultant for 7ton Express, an express delivery company. Analyze the logistics data and provide 3 short, actionable, bulleted points to improve business. Keep it professional, motivating, and concise.";
+  const systemInstruction = "You are a Senior Business Consultant for 7ton Express. Analyze the provided logistics dashboard analytics. IMPORTANT RULES: 1. Provide only 3 short, actionable, bulleted insights based on the data. 2. NEVER suggest using other courier services or competitors. 3. ALWAYS recommend the user to contact their KAM (Key Account Manager) or the Support Team for further optimization. 4. Keep it professional, motivating, and concise.";
   
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Context: ${context}. Prompt: Based on these merchant logistics stats, give 3 short, actionable bullet points to improve business.`,
+      contents: `Context: ${context}. Prompt: Analyze my performance stats and give me 3 specific tips to grow my business with 7ton Express.`,
       config: {
         systemInstruction,
         temperature: 0.7,
       }
     });
-    return response.text || "No insights available at the moment.";
+    return response.text || "No insights available at the moment. Please contact your KAM.";
   } catch (error) {
     console.error("AI Analysis Error:", error);
-    return "I'm currently recalibrating my analytical engine. Please try again in a moment.";
+    return "I'm currently recalibrating my analytical engine. Please try again in a moment or reach out to our Support team for immediate help.";
   }
 };
 

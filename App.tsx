@@ -82,7 +82,6 @@ const FilterModal = ({ activeFilter, onSelect, onClose, title }: {
     { label: 'Last 90 Days', value: '90days' },
   ];
 
-  // Prevent background scroll
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = 'unset'; };
@@ -90,14 +89,11 @@ const FilterModal = ({ activeFilter, onSelect, onClose, title }: {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-200">
-      {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       />
-      
-      {/* Modal Content */}
-      <div className="relative w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-6 animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
+      <div className="relative w-full max-sm bg-white rounded-[32px] shadow-2xl p-6 animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h4 className="text-sm font-black text-gray-900 tracking-tight">{title} Filter</h4>
@@ -186,13 +182,11 @@ const App: React.FC = () => {
   const [isStatsExpanded, setIsStatsExpanded] = useState(false);
   const [isPaymentExpanded, setIsPaymentExpanded] = useState(false);
   
-  // Filter States
   const [statsFilter, setStatsFilter] = useState('30days');
   const [paymentFilter, setPaymentFilter] = useState('30days');
   const [showStatsFilterMenu, setShowStatsFilterMenu] = useState(false);
   const [showPaymentFilterMenu, setShowPaymentFilterMenu] = useState(false);
   
-  // AI States
   const [aiLoading, setAiLoading] = useState(false);
   const [aiInsight, setAiInsight] = useState<string | null>(null);
   const [fraudPhone, setFraudPhone] = useState('');
@@ -216,7 +210,6 @@ const App: React.FC = () => {
 
   const renderHomeContent = () => (
     <div className="space-y-6 pb-32 animate-in fade-in duration-500">
-      {/* Header */}
       <div className="flex justify-between items-center pt-2">
         <Logo />
         <div className="flex items-center space-x-2">
@@ -257,7 +250,6 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Performance Dashboard Section */}
       <div className="space-y-3">
         <div className="flex justify-between items-center px-1">
           <div className="flex items-center space-x-2">
@@ -291,7 +283,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Pickup & History Card */}
       <div className="bg-white p-5 rounded-[28px] border-2 border-[#ff751f] shadow-sm grid grid-cols-2 divide-x divide-gray-100">
         <div className="pr-4">
           <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2">Pickup</p>
@@ -315,7 +306,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Payment Details */}
       <div className="space-y-3">
         <div className="flex justify-between items-center px-1">
           <div className="flex items-center space-x-2">
@@ -349,7 +339,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Service Health */}
       <div className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm space-y-5 relative overflow-hidden">
         <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
           <Activity size={80} className="text-[#1a3762]" />
@@ -377,7 +366,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Return Approval Module */}
       <div className="bg-white p-5 rounded-[32px] border border-gray-100 shadow-sm flex items-center justify-between group active:scale-[0.98] transition-all cursor-pointer">
         <div className="flex items-center space-x-4">
           <div className="p-3 bg-orange-50 text-[#ff751f] rounded-2xl group-hover:bg-[#ff751f] group-hover:text-white transition-colors">
@@ -394,7 +382,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Entry Methods Section */}
       <div className="grid grid-cols-3 gap-3 px-1">
         {[
           { icon: FilePlus, label: "Manual Entry", color: "blue", bg: "bg-blue-100", text: "text-blue-700" },
@@ -415,7 +402,6 @@ const App: React.FC = () => {
         ))}
       </div>
 
-      {/* Quick Actions Grid */}
       <div className="grid grid-cols-2 gap-4">
         {[
           { icon: Ban, label: "No Entry", color: "slate", action: () => {} },
@@ -507,7 +493,6 @@ const App: React.FC = () => {
     <div className="max-w-md mx-auto bg-[#f8fafc] min-h-screen relative selection:bg-[#ff751f]/20">
       <div className="h-4"></div>
       
-      {/* Global AI Loading Overlay */}
       {aiLoading && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/10 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white p-8 rounded-[40px] shadow-2xl flex flex-col items-center space-y-4 animate-in zoom-in-95">
@@ -527,23 +512,19 @@ const App: React.FC = () => {
 
       <main className="px-5 pb-32">{renderContent()}</main>
 
-      {/* Persistent Navigation Bar */}
       <nav 
-        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-8 py-5 flex justify-between items-center z-50 rounded-t-[48px] shadow-[0_-15px_50px_rgba(26,55,98,0.25)] border-t border-white/5"
+        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-6 py-5 flex justify-between items-center z-50 rounded-t-3xl shadow-[0_-15px_50px_rgba(26,55,98,0.25)] border-t border-white/5"
         style={{ backgroundColor: COLORS.darkBlue }}
       >
         <NavButton active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={LayoutDashboard} label="Home" />
         <NavButton active={activeTab === 'orders'} onClick={() => setActiveTab('orders')} icon={Package} label="Parcels" />
         
-        {/* Floating Add Action */}
-        <div className="relative -top-14">
-           <button 
-             className="w-16 h-16 rounded-3xl shadow-2xl border-[6px] border-[#f8fafc] bg-[#ff751f] flex items-center justify-center hover:scale-110 active:scale-90 transition-all group overflow-hidden"
-           >
-            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
-            <Plus size={28} className="text-white group-hover:rotate-90 transition-transform" strokeWidth={3} />
-           </button>
-        </div>
+        {/* Unified Row: Plus Button Integrated directly inside the blue part on the same line */}
+        <button 
+          className="w-12 h-12 rounded-2xl bg-[#ff751f] flex items-center justify-center shadow-lg active:scale-90 transition-all group overflow-hidden"
+        >
+          <Plus size={24} className="text-white group-hover:rotate-90 transition-transform" strokeWidth={3} />
+        </button>
 
         <NavButton active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} icon={FileText} label="Invoices" />
         <NavButton active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={User} label="Account" />
