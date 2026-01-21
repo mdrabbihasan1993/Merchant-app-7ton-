@@ -1,12 +1,12 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { 
   LayoutDashboard, Package, Truck, Wallet, User, Bell, Plus, 
   Clock, CheckCircle2, ArrowRightLeft, XCircle, RotateCcw, 
   RefreshCw, Zap, ArrowLeft, FileText, LifeBuoy, Settings, 
   AlertCircle, ShieldAlert, Activity, Info, Sparkles, ShieldCheck, 
   Loader2, Ban, History, ChevronDown, ChevronUp, ChevronRight,
-  Camera, FilePlus, BrainCircuit, Trophy
+  Camera, FilePlus, BrainCircuit, Trophy, Filter, Calendar, X
 } from 'lucide-react';
 import { COLORS, DASHBOARD_STATS, PAYMENT_STATS } from './constants';
 import { TabType, StatItem } from './types';
@@ -66,12 +66,131 @@ const NavButton: React.FC<NavButtonProps> = ({ active, onClick, icon: Icon, labe
   </button>
 );
 
+// --- Filter Modal Component ---
+const FilterModal = ({ activeFilter, onSelect, onClose, title }: { 
+  activeFilter: string, 
+  onSelect: (val: string) => void,
+  onClose: () => void,
+  title: string
+}) => {
+  const [showCustom, setShowCustom] = useState(false);
+  const options = [
+    { label: 'Today', value: 'today' },
+    { label: 'Yesterday', value: 'yesterday' },
+    { label: 'Last 30 Days', value: '30days' },
+    { label: 'Last 60 Days', value: '60days' },
+    { label: 'Last 90 Days', value: '90days' },
+  ];
+
+  // Prevent background scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = 'unset'; };
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-200">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      
+      {/* Modal Content */}
+      <div className="relative w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-6 animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h4 className="text-sm font-black text-gray-900 tracking-tight">{title} Filter</h4>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Select time range</p>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-2 bg-gray-50 text-gray-400 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => { onSelect(opt.value); onClose(); }}
+              className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-between group ${
+                activeFilter === opt.value 
+                  ? 'bg-blue-50 text-blue-600 border border-blue-100' 
+                  : 'text-gray-600 hover:bg-slate-50 border border-transparent'
+              }`}
+            >
+              <span>{opt.label}</span>
+              {activeFilter === opt.value && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+            </button>
+          ))}
+          
+          <div className="pt-2">
+            <button
+              onClick={() => setShowCustom(!showCustom)}
+              className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-between ${
+                showCustom ? 'bg-orange-50 text-orange-600 border border-orange-100' : 'text-gray-600 hover:bg-slate-50 border border-transparent'
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <Calendar size={14} />
+                <span>Custom Range</span>
+              </div>
+              <ChevronDown size={14} className={`transition-transform duration-300 ${showCustom ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {showCustom && (
+              <div className="p-4 space-y-4 bg-orange-50/30 rounded-2xl mt-2 animate-in slide-in-from-top-2 duration-300 border border-orange-50">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[8px] font-black text-gray-400 uppercase tracking-widest px-1">From Date</label>
+                    <input type="date" className="w-full bg-white border border-orange-100 rounded-xl p-2.5 text-[10px] font-bold outline-none focus:ring-2 focus:ring-orange-500/20" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[8px] font-black text-gray-400 uppercase tracking-widest px-1">To Date</label>
+                    <input type="date" className="w-full bg-white border border-orange-100 rounded-xl p-2.5 text-[10px] font-bold outline-none focus:ring-2 focus:ring-orange-500/20" />
+                  </div>
+                </div>
+                <button 
+                  onClick={() => { onSelect('custom'); onClose(); }}
+                  className="w-full bg-[#ff751f] text-white py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-orange-200 active:scale-95 transition-all"
+                >
+                  Apply Custom Range
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {!showCustom && (
+           <div className="mt-6 pt-4 border-t border-gray-50">
+              <button 
+                onClick={onClose}
+                className="w-full bg-[#1a3762] text-white py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-200 active:scale-95 transition-all"
+              >
+                Close Filters
+              </button>
+           </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // --- Main App Component ---
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('home');
   const [isStatsExpanded, setIsStatsExpanded] = useState(false);
   const [isPaymentExpanded, setIsPaymentExpanded] = useState(false);
+  
+  // Filter States
+  const [statsFilter, setStatsFilter] = useState('30days');
+  const [paymentFilter, setPaymentFilter] = useState('30days');
+  const [showStatsFilterMenu, setShowStatsFilterMenu] = useState(false);
+  const [showPaymentFilterMenu, setShowPaymentFilterMenu] = useState(false);
   
   // AI States
   const [aiLoading, setAiLoading] = useState(false);
@@ -141,12 +260,30 @@ const App: React.FC = () => {
       {/* Performance Dashboard Section */}
       <div className="space-y-3">
         <div className="flex justify-between items-center px-1">
-          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Performance Dashboard</h3>
+          <div className="flex items-center space-x-2">
+            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Performance Dashboard</h3>
+            <button 
+              onClick={() => setShowStatsFilterMenu(true)}
+              className="p-1.5 bg-white text-gray-400 border border-gray-100 rounded-lg hover:text-[#1a3762] hover:border-blue-100 transition-all active:scale-95"
+            >
+              <Filter size={12} />
+            </button>
+          </div>
           <button onClick={() => setIsStatsExpanded(!isStatsExpanded)} className="flex items-center text-[10px] font-bold text-[#1a3762] uppercase tracking-wider">
             {isStatsExpanded ? 'Show Less' : 'Show All'}
             {isStatsExpanded ? <ChevronUp size={14} className="ml-1" /> : <ChevronDown size={14} className="ml-1" />}
           </button>
         </div>
+
+        {showStatsFilterMenu && (
+          <FilterModal 
+            title="Performance"
+            activeFilter={statsFilter} 
+            onSelect={setStatsFilter} 
+            onClose={() => setShowStatsFilterMenu(false)} 
+          />
+        )}
+
         <div className="grid grid-cols-3 gap-2">
           {DASHBOARD_STATS.slice(0, isStatsExpanded ? DASHBOARD_STATS.length : 3).map((stat, index) => (
             <StatCard key={index} item={stat} />
@@ -181,12 +318,30 @@ const App: React.FC = () => {
       {/* Payment Details */}
       <div className="space-y-3">
         <div className="flex justify-between items-center px-1">
-          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Payment Details</h3>
+          <div className="flex items-center space-x-2">
+            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Payment Details</h3>
+            <button 
+              onClick={() => setShowPaymentFilterMenu(true)}
+              className="p-1.5 bg-white text-gray-400 border border-gray-100 rounded-lg hover:text-[#1a3762] hover:border-blue-100 transition-all active:scale-95"
+            >
+              <Filter size={12} />
+            </button>
+          </div>
           <button onClick={() => setIsPaymentExpanded(!isPaymentExpanded)} className="flex items-center text-[10px] font-bold text-[#1a3762] uppercase tracking-wider">
             {isPaymentExpanded ? 'Show Less' : 'Show All'}
             {isPaymentExpanded ? <ChevronUp size={14} className="ml-1" /> : <ChevronDown size={14} className="ml-1" />}
           </button>
         </div>
+
+        {showPaymentFilterMenu && (
+          <FilterModal 
+            title="Payment"
+            activeFilter={paymentFilter} 
+            onSelect={setPaymentFilter} 
+            onClose={() => setShowPaymentFilterMenu(false)} 
+          />
+        )}
+
         <div className="grid grid-cols-3 gap-2">
           {PAYMENT_STATS.slice(0, isPaymentExpanded ? PAYMENT_STATS.length : 3).map((stat, index) => (
             <StatCard key={index} item={stat} />
@@ -239,7 +394,7 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Entry Methods Section - Updated to have a light blue (halka blue) background */}
+      {/* Entry Methods Section */}
       <div className="grid grid-cols-3 gap-3 px-1">
         {[
           { icon: FilePlus, label: "Manual Entry", color: "blue", bg: "bg-blue-100", text: "text-blue-700" },
