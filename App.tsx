@@ -6,7 +6,7 @@ import {
   RefreshCw, Zap, ArrowLeft, FileText, LifeBuoy, Settings, 
   AlertCircle, ShieldAlert, Activity, Info, Sparkles, ShieldCheck, 
   Loader2, Ban, History, ChevronDown, ChevronUp, ChevronRight,
-  Camera, FilePlus, BrainCircuit, Trophy, Filter, Calendar, X
+  Camera, FilePlus, WandSparkles, Trophy, Filter, Calendar, X
 } from 'lucide-react';
 import { COLORS, DASHBOARD_STATS, PAYMENT_STATS } from './constants';
 import { TabType, StatItem } from './types';
@@ -276,10 +276,21 @@ const App: React.FC = () => {
           />
         )}
 
-        <div className="grid grid-cols-3 gap-2">
-          {DASHBOARD_STATS.slice(0, isStatsExpanded ? DASHBOARD_STATS.length : 3).map((stat, index) => (
-            <StatCard key={index} item={stat} />
-          ))}
+        {/* Smooth "Halka" Slider Container */}
+        <div 
+          className="transition-all duration-700 ease-in-out overflow-hidden" 
+          style={{ maxHeight: isStatsExpanded ? '500px' : '104px' }}
+        >
+          <div className="grid grid-cols-3 gap-2">
+            {DASHBOARD_STATS.map((stat, index) => (
+              <div 
+                key={index} 
+                className={`transition-opacity duration-500 ${!isStatsExpanded && index >= 3 ? 'opacity-0' : 'opacity-100'}`}
+              >
+                <StatCard item={stat} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -332,10 +343,21 @@ const App: React.FC = () => {
           />
         )}
 
-        <div className="grid grid-cols-3 gap-2">
-          {PAYMENT_STATS.slice(0, isPaymentExpanded ? PAYMENT_STATS.length : 3).map((stat, index) => (
-            <StatCard key={index} item={stat} />
-          ))}
+        {/* Smooth "Halka" Slider Container for Payment */}
+        <div 
+          className="transition-all duration-700 ease-in-out overflow-hidden" 
+          style={{ maxHeight: isPaymentExpanded ? '500px' : '104px' }}
+        >
+          <div className="grid grid-cols-3 gap-2">
+            {PAYMENT_STATS.map((stat, index) => (
+              <div 
+                key={index} 
+                className={`transition-opacity duration-500 ${!isPaymentExpanded && index >= 3 ? 'opacity-0' : 'opacity-100'}`}
+              >
+                <StatCard item={stat} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -385,7 +407,7 @@ const App: React.FC = () => {
       <div className="grid grid-cols-3 gap-3 px-1">
         {[
           { icon: FilePlus, label: "Manual Entry", color: "blue", bg: "bg-blue-100", text: "text-blue-700" },
-          { icon: BrainCircuit, label: "AI Entry", color: "indigo", bg: "bg-indigo-100", text: "text-indigo-700" },
+          { icon: WandSparkles, label: "AI Entry", color: "indigo", bg: "bg-indigo-100", text: "text-indigo-700" },
           { icon: Camera, label: "Camera Entry", color: "orange", bg: "bg-orange-100", text: "text-[#ff751f]" },
         ].map((item, i) => (
           <button 
